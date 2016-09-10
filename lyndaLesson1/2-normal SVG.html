@@ -5,14 +5,19 @@
     <link rel="stylesheet" type="text/css" href="../libs/base.css">
 
 	<style type="text/css">
-
+        .centerlize{
+            width:1000px;
+            margin:0 auto;
+            border:1px black dashed;
+            padding:10px
+        }
 	</style>
 
 </head>
-<body>
+<body class='centerlize'>
+<br>
 
-
-
+<h1>Normal SVG Graph</h1>
     <svg width="600" height="400"
       style="background: #93A1A1">
       <rect x="250" y="150" width="100"
@@ -33,11 +38,35 @@
 
 
 
+<hr><hr><hr>
+<br>
+
+<h1>D3 Generated SVG Graph</h1>
+<div id='svg-chart'></div>
 
 
 <script type="text/javascript" src='../libs/d3.v4.min.js'></script>
 <script type="text/javascript">
 
+    
+    d3.select('#svg-chart')
+        .append('svg')
+        .attr('width',600).attr('height',400)
+        .attr('id',"svg-2")
+        .style('background-color','#93A1A1')
+        .append('rect')
+        .attr('x',200)
+        .attr('y',100)
+        .attr('height',200)
+        .attr('width',200)
+        .style('fill','#CB4B19');
+    d3.select('#svg-2').append('circle')
+        .attr('cx',300)
+        .attr('cy',200)
+        .attr('r',50)
+        .style('fill','#840043');
+    
+    
 </script>
 
 

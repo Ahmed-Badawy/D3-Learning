@@ -6,9 +6,8 @@
 
 	<style type="text/css">
         section{
-            padding:20px;
+            padding:5px;
             font-weight: bold;
-            font-size: 30px;
         }
         
 	</style>
@@ -35,11 +34,11 @@
 <script type="text/javascript">
 var myStyles = [
     {color:'#268Bd2',width:200},
-    {color:'#A57706',width:120},
-    {color:'#D11c24',width:100},
-    {color:'#2176C7',width:200},
+    {color:'#A57706',width:450},
+    {color:'#D11c24',width:200},
+    {color:'#2176C7',width:500},
     {color:'#D096C7',width:400},
-    {color:'#2936C7',width:250},
+    {color:'#c11c24',width:800},
 ];
 
 
@@ -55,16 +54,18 @@ var myStyles = [
 	// d3.select('.container').append('div').html("<strong>HTML Change</strong>"); 
 	// d3.select('.container').classed("yellow",true); // will add new class
 	// d3.select('.container').style('background-color','green'); // will add new class
-	d3.selectAll('.area')
+	var elm = d3.selectAll('.area')
 	.data(myStyles)
 	.style('color','white')
 	.style( 'background-color',function(d){ //this will take data element then return it's color
 		return d.color;
 	})
-    .style('width',function(d){
+    .style('width',function(d){ //this is how to set the width
         return d.width+'px';
-    })
-    ;	
+    });	
+    
+    elm.append("span")
+    .text(function(d) { return " - "+d.color; });
 
 
 </script>
