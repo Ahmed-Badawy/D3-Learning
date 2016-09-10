@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src='../libs/d3.v4.min.js'></script>
+	<style type="text/css">
+		body{
+			padding-top:50px;	
+			padding-left: 100px;
+		}
+		.bar{
+			display: inline-block;
+			width:20px;
+			/*height: 75px;*/
+			margin-right: 2px;
+			background-color: teal;
+		}
+
+		.area{
+			background-color: #ccc;
+			border:1px solid #222;
+			margin:3px;
+		}
+
+	</style>
+</head>
+<body>
+
+<div class='area' id="Area1"></div>
+<div class='area' id="Area2"></div>
+
+<script type="text/javascript">
+
+	var dataset = [5,10,15,20,22];
+
+//normal way
+	d3.select('#Area1').selectAll('div').data(dataset).enter().append('div')
+	.attr('class','bar')
+	.style('height',function(d){
+		return d * 7 + "px";
+	});
+
+//svg way
+	var svg = d3.select('#Area2').append('svg')
+	.attr('width',400)
+	.attr('height',300);
+
+	var multiplier = 10
+
+	svg.selectAll('rect').data(dataset).enter().append('rect')
+	.attr('class','bar')
+	.attr('x',function(d,i){
+		return i * 22;
+	})
+	.attr('y',function(d){
+		return 300 - d * multiplier
+	})
+	.attr('width',20)
+	.attr('height',function(d){
+		return d * multiplier;
+	});
+
+
+
+//d3 built scale 
+	// var svg = d3.select('#Area2').append('svg')
+	// .attr('width',400)
+	// .attr('height',300);
+
+	// var multiplier = 10
+
+	// svg.selectAll('rect').data(dataset).enter().append('rect')
+	// .attr('class','bar')
+	// .attr('x',function(d,i){
+	// 	return i * 22;
+	// })
+	// .attr('y',function(d){
+	// 	return 300 - d * multiplier
+	// })
+	// .attr('width',20)
+	// .attr('height',function(d){
+	// 	return d * multiplier;
+	// });
+
+
+	
+
+
+</script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

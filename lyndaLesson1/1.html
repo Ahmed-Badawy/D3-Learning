@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <link rel="stylesheet" type="text/css" href="../libs/base.css">
+
+	<style type="text/css">
+        section{
+            padding:20px;
+            font-weight: bold;
+            font-size: 30px;
+        }
+        
+	</style>
+
+</head>
+<body>
+
+
+
+<div class="container">
+	<section class='area' id="Area1">one</section>
+	<section class='area' id="Area2">two</section>
+	<section class='area' id="Area3">three</section>
+	<section class='area' id="Area4">four</section>
+	<section class='area' id="Area5">five</section>
+	<section class='area' id="Area6">six</section>
+</div>
+
+
+
+
+
+<script type="text/javascript" src='../libs/d3.v4.min.js'></script>
+<script type="text/javascript">
+var myStyles = [
+    {color:'#268Bd2',width:200},
+    {color:'#A57706',width:120},
+    {color:'#D11c24',width:100},
+    {color:'#2176C7',width:200},
+    {color:'#D096C7',width:400},
+    {color:'#2936C7',width:250},
+];
+
+
+/*there is 		.select() .selectAll()
+				.insert() .append() .remove() .html() .text() 
+				.attr() .classed() .style()
+*/
+
+//you can select with select or selectAll like this:
+	// d3.select('#Area1').text("hello world"); //select then change text
+	// d3.selectAll('.area').html("<h1>HTML Change</h1>"); //select all .area then change inner html
+	// d3.selectAll('.area:nth-child(2)').text("Change This One Only")//change the second one
+	// d3.select('.container').append('div').html("<strong>HTML Change</strong>"); 
+	// d3.select('.container').classed("yellow",true); // will add new class
+	// d3.select('.container').style('background-color','green'); // will add new class
+	d3.selectAll('.area')
+	.data(myStyles)
+	.style('color','white')
+	.style( 'background-color',function(d){ //this will take data element then return it's color
+		return d.color;
+	})
+    .style('width',function(d){
+        return d.width+'px';
+    })
+    ;	
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
