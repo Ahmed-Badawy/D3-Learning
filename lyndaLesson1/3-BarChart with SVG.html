@@ -11,6 +11,10 @@
             border:1px black dashed;
             padding:10px
         }
+        small{
+            font-size:50%;
+            color:red;
+        }
 	</style>
 
 </head>
@@ -19,13 +23,14 @@
 
 <h1>Simple BarChart with SVG</h1>
 <div id='svg-chart'></div>
+<h3>notice the problems with the scaling in both height & width. <br><small>will be fixed next lesson</small></h3>
 
 
 <script type="text/javascript" src='../libs/d3.v4.min.js'></script>
 <script type="text/javascript">
-    var data=[
-        100,40,400,150,320
-    ]
+    
+    for(var data=[],i=0; i<9; i++){ data.push(Math.random()*500) }
+
     var height = 600,
         width = 800,
         barWidth = 50,
@@ -47,53 +52,10 @@
         .attr('height', d=>d)
         .attr( 'x', (d,i)=>i*(barWidth+barOffset) )
         .attr('y', d=>height-d )   
-    
-    
-//        .append('rect')
-//        .attr('x',200)
-//        .attr('y',100)
-//        .attr('height',200)
-//        .attr('width',200)
-//        .style('fill','#CB4B19');
-//    d3.select('#svg-2').append('circle')
-//        .attr('cx',300)
-//        .attr('cy',200)
-//        .attr('r',50)
-//        .style('fill','#840043');
-    
+        
     
 </script>
 
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

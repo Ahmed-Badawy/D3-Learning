@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <link rel="stylesheet" type="text/css" href="../libs/base.css">
+
+	<style type="text/css">
+        .centerlize{
+            width:1000px;
+            margin:0 auto;
+            border:2px black dashed;
+            padding:10px
+        }
+	</style>
+
+</head>
+<body class='centerlize'>
+<br>
+
+<h1>Simple BarChart with SVG</h1>
+<div id='svg-chart'></div>
+
+
+<script type="text/javascript" src='../libs/d3.v4.min.js'></script>
+<script type="text/javascript">
+    
+    for(var data=[],i=0; i<50; i++){ data.push(Math.random()*10) }
+    
+    
+    var height = 600,
+        width = 800,
+        barWidth = 50,
+        barOffset = 5;
+    
+/*-----------------------------------------------------------------------
+    Adding Quantitiative Scale & Ordinal Scales & colors
+-----------------------------------------------------------------------*/
+//This is used to make the height fit to the top of the svg elm. recalc every column to make it fit on the svg.
+    var yScale = d3.scaleLinear().domain([0,d3.max(data)]).range([0,height]);//fit to the height of the svg
+//    var xScale = d3.scaleOrdinal().domain(data).rangeBands([0,width]);//fit to the height of the svg
+    var xScale = d3.scaleBand().domain(d3.range(0, data.length)).range([0, width]);
+
+//    var data_colors = d3.scaleLinear().domain([0,d3.max(data)]).range('red','blue');
+    var color_range = d3.scaleLinear().domain([0, d3.max(data)]).range(["yellow", "#C61C6F"]);//range to color heigher with red & lower with yellow
+    
+    
+    d3.select('#svg-chart')
+        .append('svg')
+        .attr('width',width)
+        .attr('height',height)
+        .attr('id',"svg-2")
+        .style('background-color','#93A1A1')
+        .selectAll('rect')
+        .data(data)
+        .enter()
+        .append('rect')
+    
+//        .style('fill', "yellow") //sets the fill color
+        .style('fill', color_range) //sets the fill color to the color_range
+        
+//        .attr('width',barWidth)
+        .attr('width', xScale.bandwidth() ) //make it fit to the svg width
+    
+//        .attr('height', d=>d) //this is the height of the graph
+        .attr('height', d=>yScale(d) ) //this will return the height after making it fill the height of the graph
+    
+//        .attr( 'x', (d,i)=>i*(barWidth+barOffset) )
+        .attr( 'x', (d,i)=>xScale(i) )//make it fit to the svg width
+    
+//        .attr('y', d=>height-d )   
+        .attr('y', d=>height- yScale(d) )   //made this to make it fit to the svg
+    
+    
+    
+//        .append('span').html(d=>d).style('color','#222');
+    
+    
+    
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
