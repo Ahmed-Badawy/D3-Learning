@@ -24,7 +24,7 @@
 <script type="text/javascript" src='../libs/d3.v4.min.js'></script>
 <script type="text/javascript">
     
-    for(var data=[],i=0; i<50; i++){ data.push(Math.random()*10) }
+    for(var data=[],i=0; i<50; i++){ data.push( Math.random() * 10) }
     
     
     var height = 600,
@@ -42,7 +42,9 @@
 
 //    var data_colors = d3.scaleLinear().domain([0,d3.max(data)]).range('red','blue');
     var color_range = d3.scaleLinear().domain([0, d3.max(data)]).range(["yellow", "#C61C6F"]);//range to color heigher with red & lower with yellow
-    
+/*-----------------------------------------------------------------------*/
+
+    var temp_color = '';
     
     d3.select('#svg-chart')
         .append('svg')
@@ -69,6 +71,14 @@
     
 //        .attr('y', d=>height-d )   
         .attr('y', d=>height- yScale(d) )   //made this to make it fit to the svg
+    
+//adding events to my chart:-    
+        .on('mouseenter',function(d){
+            temp_color = this.style.fill;
+            d3.select(this).style('opacity',.5).style('fill','#222'); 
+        })
+        .on('mouseleave',function(d){ d3.select(this).style('opacity',1).style('fill',temp_color) })
+        .on('click',d=>alert(d))
     
     
     
