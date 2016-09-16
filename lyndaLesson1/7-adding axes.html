@@ -35,7 +35,7 @@
 <script type="text/javascript" src='../libs/d3.v4.min.js'></script>
 <script type="text/javascript">
     
-    for(var data=[],i=0; i<50; i++){ data.push( Math.round(Math.random() * 10) * 50 + 30) }    
+    for(var data=[],i=0; i<50; i++){ data.push( Math.round(Math.random() * 10) * 20 + 30) }    
     
     var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
         width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
@@ -57,7 +57,8 @@
     var temp_color = '';
     
     
-    var tooltip = d3.select('body').append('div').attr('class','tooltip');
+    var tooltip = d3.select('body').append('div')
+                    .attr('class','tooltip');
         
         
     var layout = d3.select('#svg-chart')
@@ -130,10 +131,24 @@
         .on('click',d=>alert("this value is: "+d))
 
     
+//Adding Axes:-    
+//        var vAxis = d3.svg.axis()
+//            .scale(yScale)
+//            .orient('left')
+//            .ticks(10);
+//    
+
+     
+        
+
+        var xAxis = d3.axisBottom()
+            .scale(xScale);
+
+        var yAxis = d3.axisLeft()
+            .scale(yScale);
     
-//        .append('span').html(d=>d).style('color','#222');
-    
-    
+//        var vGuid = d3.select('svg').append('g').vAxis(vGuid); 
+        
     
 </script>
 
