@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src='d3.min.js'></script>
+	<style type="text/css">
+        div,svg,h1,h2,h3,react{
+            padding:0;
+            margin:0;
+        }
+		body{
+			padding-top:50px;	
+			padding-left: 100px;
+		}
+        h3{
+            padding:0;
+            margin:0;
+            margin-top:30px;
+        }
+		.bar{
+			display: inline-block;
+/*			width:20px;*/
+			margin-right: 1px;
+			margin-left: 1px;
+			background-color: teal;
+		}
+
+        
+        svg,#Area1{
+			background-color: #ddd;
+			border:1px solid #222;
+            margin:0;
+            padding:0;
+		}
+
+        .bubble{
+            /*fill: teal;*/
+            fill-opacity:.7;
+            stroke:black;
+            stroke-width:2px;
+        }
+        .button{
+            background-color:teal;
+            color:white;
+            padding:10px;
+            width:800px;
+        }
+
+	</style>
+</head>
+<body>
+
+
+<h3>Normal Way</h3>
+<div class='area' id="Area1"></div>
+<h3>SVG Way</h3>
+<div class='area' id="Area2"></div>
+<h3>SVG Way (defining y) </h3>
+<div class='area' id="Area3"></div>
+<h3>Scaling it (d3.max(dataset) & d3.min(dataset) ) & colors</h3>
+<div class='area' id="Area4"></div>
+
+<h3>Quantize() color Scale</h3>
+<div class='area' id="Area4-1"></div>
+
+<h3>Colors By Line Value (two colors only)</h3>
+<div class='area' id="Area5"></div>
+<h3>Multible Colors & Events & transitions</h3>
+<div class='area' id="Area6"></div>
+<button onclick='update1()' class='button'>Update</button>
+
+<h3>Axis & Data Operations (sorting data)</h3>
+<div class='area' id="Area7"></div>
+<h3>Adding margins to Axis</h3>
+<div class='area' id="Area8"></div>
+<h3>Circles</h3>
+<div class='area' id="Area9"></div>
+<button onclick='update2()' class='button'>Update</button>
+
+
+
+
+<script type="text/javascript">
+    function get_rand(begin,end){
+        return Math.round(Math.random()*end)+begin
+    }   
+
+    var begin = 0, end = 20;
+    var w=800, h=300;
+
+    for(var dataset=[],i=0; i<20; i++){ dataset.push(get_rand(begin,end)) }
+    
+//---------------------------------------------------------------------  
+//normal way
+	d3.select('#Area1').selectAll('div').data(dataset).enter().append('div')
+	.attr('class','bar')
+	.style('height',function(d){
+		return d * 7 + "px";
+	}).style('width','20px');
+
+    
+//---------------------------------------------------------------------  
+//svg way
+	var svg = d3.select('#Area2').append('svg').attr('width',w).attr('height',h);
+	var multiplier = 10
+
+	svg.selectAll('rect').data(dataset).enter().append('rect')
+	.attr('class','bar')
+	.attr('x',function(d,i){
+		return i * 22;
+	})
+	.attr('y',0)
+	.attr('width',20)
+	.attr('height',function(d){
+		return d * multiplier;
+	})
+    .attr('fill','BlueViolet');
+
+    
+//---------------------------------------------------------------------  
+//svg way
+	var svg = d3.select('#Area3').append('svg').attr('width',w).attr('height',h);
+	var multiplier = 10
+
+	svg.selectAll('rect').data(dataset).enter().append('rect')
+	.attr('class','bar')
+	.attr('x', (d,i)=>i*22)
+	.attr('y',function(d){
+        //300 is the height of the whole svg
+		return h - d * multiplier
+	})
+	.attr('width',20)
+	.attr('height',function(d){
+		return d * multiplier;
+	})
+    .attr('fill','BlueViolet');
+
+    
+//---------------------------------------------------------------------  
+//d3 built scale 
+	 var svg = d3.select('#Area4').append('svg').attr('width',w).attr('height',h);
+     
+//in domain 0 is the lowest data value. & 22 is the heighest data value. 
+//in range 0 is the lowest value to repreasent & h is the full height of the whole svg
+    var yScale = d3.scale.linear().domain([0,22]).range([0,h]);
+    //you can represent it with these methods: d3.max(dataset) & d3.min(dataset)
+    //to leave some padding at the top of the chart you can * 1.1 on end of max
+        var yScale = d3.scale.linear().domain([ 0 , d3.max(dataset) * 1.1 ]).range([0,h]);
+    
+//0 is the begin of the svg & w is the end of the svg. 
+    //second params is the padding between rects from 0 to 1 value; the third param is the padding outside the bands.
+     var xScale = d3.scale.ordinal().domain( d3.range(0,dataset.length) ).rangeBands([0, w],.1,.1);
+    
+//this is color scale.  domain max will be the dataset length
+     var colorScale = d3.scale.linear().domain([0,dataset.length]).range(['yellow','purple']);
+
+	 svg.selectAll('rect').data(dataset).enter().append('rect')
+         .attr('class','bar')
+         .attr('x',(d,i)=>xScale(i))
+         .attr('y', d=>h-yScale(d) )
+         .attr('width', xScale.rangeBand() )
+         .attr('height', d=> yScale(d) )
+         .attr('fill', (d,i)=>colorScale(i) ); //i means color according to index of react
+
+
+
+//---------------------------------------------------------------------    
+//Quantize Scale: means seperate between color ranger
+     var svg = d3.select('#Area4-1').append('svg').attr('width',w).attr('height',h);
+     var colorScale2 = d3.scale.quantize().domain([0,dataset.length]).range(['yellow','orange','red','purple']);
+
+     svg.selectAll('rect').data(dataset).enter().append('rect')
+         .attr('class','bar')
+         .attr('x',(d,i)=>xScale(i))
+         .attr('y', d=>h-yScale(d) )
+         .attr('width', xScale.rangeBand() )
+         .attr('height', d=> yScale(d) )
+         .attr('fill', (d,i)=>colorScale2(i) ); //i means color according to index of react
+    
+
+
+//---------------------------------------------------------------------    
+//now we can change the coloring to be colored by line height. domain max will be the dataset max value
+     var colorScale = d3.scale.linear().domain([0, d3.max(dataset) ]).range(['yellow','purple']);
+
+	 var svg = d3.select('#Area5').append('svg').attr('width',w).attr('height',h);
+	 svg.selectAll('rect').data(dataset).enter().append('rect')
+         .attr('class','bar')
+         .attr('x',(d,i)=>xScale(i))
+         .attr('y', d=>h-yScale(d) )
+         .attr('width', xScale.rangeBand() )
+         .attr('height', d=> yScale(d) )
+         .attr('fill', (d,i)=>colorScale(d) );//d means color according to value of react
+
+    
+//---------------------------------------------------------------------    
+//we can also add multible colors like this.
+    var colorScale = d3.scale.linear()
+     .domain([ 0, dataset.length*1/3, dataset.length*2/3, dataset.length ]) //this means at 1/3: red, 2/3: blue
+     .range([ 'yellow', 'red', 'blue', 'purple' ]);
+    
+	var svg6 = d3.select('#Area6').append('svg').attr('width',w).attr('height',h);
+	
+    var Rects = svg6.selectAll('rect').data(dataset).enter().append('rect')        
+        .attr('class','bar')
+        .attr('x',(d,i)=>xScale(i))
+        .attr('width', xScale.rangeBand() )
+
+        // .attr('height', d=> yScale(d) )
+        // .attr('y', d=>h-yScale(d) )
+        .attr('height', 0 )     //begin with height of 0 
+        .attr('y', d=>h )       //begin with y positoin of height of svg
+
+        .attr('fill', (d,i)=>colorScale(i) )
+
+//event listener:-
+    svg6.selectAll('rect').on('mouseover',function(d){
+            d3.select(this)
+            .transition() //adding transition to the effect     
+            .style('opacity',.5)
+
+        }).on('mouseout',function(d){
+            d3.select(this)
+            .transition() //adding transition to the effect
+//also you can control the duration() & delay() of the transition. [both optional]
+            .duration(500).delay(200)
+
+            .style('opacity',1) 
+        }).on('click',function(d){
+            alert("your value is: "+d);
+        });
+
+//now we can add transitions to rects only:-
+    Rects.transition()
+        .attr('height', d=> yScale(d) )
+        .attr('y', d=>h-yScale(d) )
+        .delay( (d,i)=>i*30 ) //delay every rect by 30 after it's successor
+        .duration(1000)
+        .ease('elastic');
+        
+
+
+function update1(){
+    for(var dataset=[],i=0; i<20; i++){ dataset.push(get_rand(0,20)) };
+    console.log(dataset);
+    svg6.selectAll('rect').data(dataset)
+        .transition()
+        .duration( (d,i)=>i*100 )
+        .attr('height', d=> yScale(d) )
+        .attr('y', d=>h-yScale(d) )
+        .attr('fill', (d,i)=>colorScale(d) );
+}
+
+
+    
+
+//---------------------------------------------------------------------    
+//Axis & data operations
+    // dataset.sort( (x,y)=>x-y ); //sorting the data 
+
+    var svg = d3.select('#Area7').append('svg')
+        .attr('width',w).attr('height',h)  
+        .append('g');
+
+    svg.selectAll('rect').data(dataset).enter().append('rect')
+        .attr('class','bar')
+        .attr('x',(d,i)=>xScale(i))
+        .attr('y', d=>h-yScale(d) )
+        .attr('width', xScale.rangeBand() )
+        .attr('height', d=> yScale(d) )
+        .attr('fill', (d,i)=>colorScale(i) )
+    
+
+//now the vertical axis:-
+    //-----
+    //we can use the yScale for vertical alignment like this:-
+        // var vAxis = d3.svg.axis().scale(yScale).orient('left').ticks(10); //10 ticks means ten lines
+
+    //or we can create a custome Scale to order the ticks the right way like this:-
+        var vGuideScale = d3.scale.linear().domain([0, d3.max(dataset)]).range([h,0])
+        var vAxis = d3.svg.axis().scale(vGuideScale).orient('left').ticks(10); //10 ticks means ten lines
+    // -----
+
+    var vGuide = d3.select('#Area7>svg').append('g');
+    vAxis(vGuide);
+    vGuide.attr('transform','translate(35,10)'); //margin from left 35 & from top 10
+    vGuide.selectAll('path').style( {fill:"none", stroke:"#666"} );//path is the vertical line
+    vGuide.selectAll('line').style( {stroke:"#000"} ); //lines is the (horizontal) ticks
+
+
+//now the horizontal axis
+    var hAxis = d3.svg.axis().scale(xScale).orient('bottom')
+                .tickValues(xScale.domain().filter( (d,i)=>!(i%(dataset.length/5)) ))// this means get 5 ticks
+    var hGuide = d3.select('#Area7>svg').append('g');
+    hAxis(hGuide);
+    hGuide.attr('transform', `translate(0, ${h-30} )` );
+    hGuide.selectAll('path').style( {fill:"none", stroke:"#666"} );//path is the vertical line
+    hGuide.selectAll('line').style( {stroke:"#000"} ); //lines is the (horizontal) ticks
+
+
+
+
+//---------------------------------------------------------------------    
+//Adding margins to axis
+    var margin = {top: 0, right:0, bottom:25, left:20};
+    var mHeight = h - margin.top - margin.bottom,
+        mWidth = w - margin.left - margin.right;
+
+    var xScale = d3.scale.ordinal().domain( d3.range(0,dataset.length) ).rangeBands([0, mWidth],.1,.1);
+    var yScale = d3.scale.linear().domain([ 0 , d3.max(dataset) * 1.1 ]).range([0, mHeight]);
+
+    var svg = d3.select('#Area8').append('svg')
+        .attr('width',w).attr('height',h)//moved the axis
+        .append('g');
+
+    svg.attr('transform',`translate( ${margin.left}, ${margin.top} )`);//translate it
+
+    svg.selectAll('rect').data(dataset).enter().append('rect')
+        .attr('class','bar')
+        .attr('x',(d,i)=>xScale(i))
+        .attr('y', d=>mHeight-yScale(d) ) //moved the axis
+        .attr('width', xScale.rangeBand() )
+        .attr('height', d=> yScale(d) )
+        .attr('fill', (d,i)=>colorScale(i) )
+    
+
+    var vGuideScale = d3.scale.linear().domain([0, d3.max(dataset)]).range([mHeight,0])//moved the axis
+    var vAxis = d3.svg.axis().scale(vGuideScale).orient('left').ticks(10); //10 ticks means ten lines
+
+    var vGuide = d3.select('#Area8>svg').append('g');
+    vAxis(vGuide);
+    // vGuide.attr('transform','translate(35,10)'); //margin from left 35 & from top 10
+    vGuide.attr('transform',`translate( ${margin.left}, ${margin.top} )`); //modified to fit the margins
+    vGuide.selectAll('path').style( {fill:"none", stroke:"#666"} );
+    vGuide.selectAll('line').style( {stroke:"#000"} ); 
+
+    var hAxis = d3.svg.axis().scale(xScale).orient('bottom')
+                .tickValues(xScale.domain().filter( (d,i)=>!(i%(dataset.length/5)) ))
+    var hGuide = d3.select('#Area8>svg').append('g');
+    hAxis(hGuide);
+    // hGuide.attr('transform', `translate(0, ${h-30} )` );
+    hGuide.attr('transform', `translate( ${margin.left-9}, ${mHeight+margin.top} )` );
+    hGuide.selectAll('path').style( {fill:"none", stroke:"#666"} );
+    hGuide.selectAll('line').style( {stroke:"#000"} );
+
+
+
+
+//---------------------------------------------------------------------    
+//Circles
+    
+
+
+    for(var dataset2=[],i=0; i<20; i++){ dataset2.push({
+        x: get_rand(0,100),
+        y: get_rand(0,100),
+        r: get_rand(0,50),
+    }) }
+
+    var margin = {top: 0, right:0, bottom:10, left:20};
+    var mHeight = h - margin.top - margin.bottom,
+        mWidth = w - margin.left - margin.right;
+
+    var xScale = d3.scale.linear().domain([margin.left,100]).range([0, mWidth]);
+    var yScale = d3.scale.linear().domain([ 0 , d3.max(dataset2, d=>d.y) ]).range([mHeight,0]);//use max function with an accessor
+
+    var svg3 = d3.select('#Area9').append('svg')
+        .attr('width',w).attr('height',h)
+        .append('g');
+
+    svg3.selectAll('circle').data(dataset2).enter().append('circle')
+        .attr('class','bubble')
+        .attr('cx', d=>xScale(d.x) )
+        .attr('cy', d=>yScale(d.y) ) 
+        .attr('r', d=>d.r )
+        .attr('fill', (d,i)=>colorScale(i) );
+    
+
+
+
+    var vGuideScale = d3.scale.linear().domain([0, d3.max(dataset)]).range([mHeight,0])//moved the axis
+    var vAxis = d3.svg.axis().scale(vGuideScale).orient('left').ticks(10); //10 ticks means ten lines
+
+    var vGuide = d3.select('#Area9>svg').append('g');
+    vAxis(vGuide);
+    // vGuide.attr('transform','translate(35,10)'); //margin from left 35 & from top 10
+    vGuide.attr('transform',`translate( ${margin.left}, ${margin.top} )`); //modified to fit the margins
+    vGuide.selectAll('path').style( {fill:"none", stroke:"#666"} );
+    vGuide.selectAll('line').style( {stroke:"#000"} ); 
+
+
+function update2(){
+    for(var dataset2=[],i=0; i<20; i++){ dataset2.push({
+        x: get_rand(0,100),
+        y: get_rand(0,100),
+        r: get_rand(0,50),
+    }) }    
+    svg3.selectAll('circle').data(dataset2)
+        .transition(1000)
+        .duration( (d,i)=>i*150 )
+        .attr('cx', d=>xScale(d.x) )
+        .attr('cy', d=>yScale(d.y) ) 
+        .attr('r', d=>d.r );    
+}
+
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
+
